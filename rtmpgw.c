@@ -552,9 +552,10 @@ void processTCPrequest(STREAMING_SERVER * server,	// server socket and state (ou
   RTMP_Log(RTMP_LOGDEBUG, "Setting buffer time to: %dms", req.bufferTime);
   RTMP_Init(&rtmp);
   RTMP_SetBufferMS(&rtmp, req.bufferTime);
+  AVal a, b, c;
   RTMP_SetupStream(&rtmp, req.protocol, &req.hostname, req.rtmpport, &req.sockshost,
 		   &req.playpath, &req.tcUrl, &req.swfUrl, &req.pageUrl, &req.app, &req.auth, &req.swfHash, req.swfSize, &req.flashVer, &req.subscribepath, &req.usherToken, dSeek, req.dStopOffset,
-		   req.bLiveStream, req.timeout);
+		   req.bLiveStream, req.timeout, &a, &b, &c);
   /* backward compatibility, we always sent this as true before */
   if (req.auth.av_len)
     rtmp.Link.lFlags |= RTMP_LF_AUTH;
