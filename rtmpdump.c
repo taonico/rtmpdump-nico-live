@@ -764,6 +764,9 @@ main(int argc, char **argv)
   uint32_t swfSize = 0;
   AVal flashVer = { 0, 0 };
   AVal sockshost = { 0, 0 };
+  AVal nlplaypath = { 0, 0 };
+  AVal nltoken = { 0, 0 };
+  AVal nlid = { 0, 0 };
 
 #ifdef CRYPTO
   int swfAge = 30;	/* 30 days for SWF cache by default */
@@ -846,12 +849,13 @@ main(int argc, char **argv)
     {"quiet", 0, NULL, 'q'},
     {"verbose", 0, NULL, 'V'},
     {"jtv", 1, NULL, 'j'},
+    {"nlpalypath", 1, NULL, 'N'},
     {0, 0, 0, 0}
   };
 
   while ((opt =
 	  getopt_long(argc, argv,
-		      "hVveqzr:s:t:p:a:b:f:o:u:C:n:c:l:y:Ym:k:d:A:B:T:w:x:W:X:S:#j:",
+		      "hVveqzr:s:t:p:a:b:f:o:u:C:n:c:l:y:Ym:k:d:A:B:T:w:x:W:X:S:#j:N:",
 		      longopts, NULL)) != -1)
     {
       switch (opt)
@@ -1051,6 +1055,7 @@ main(int argc, char **argv)
 	  break;
 	case 'V':
 	  RTMP_debuglevel = RTMP_LOGDEBUG;
+	  RTMP_LogPrintf("change level %d\n", RTMP_debuglevel);
 	  break;
 	case 'z':
 	  RTMP_debuglevel = RTMP_LOGALL;
@@ -1061,6 +1066,17 @@ main(int argc, char **argv)
 	case 'j':
 	  STR2AVAL(usherToken, optarg);
 	  break;
+        case 'N':
+          {
+            char *tmp_nltoken;
+            char *tmp_nlid[255];
+            STR2AVAL(nlplaypath, strtok(optarg,","));
+            tmp_nltoken = strtok(NULL, ",");
+            STR2AVAL(nltoken   , tmp_nltoken);
+            strcpy((char*)tmp_nlid, tmp_nltoken);
+            STR2AVAL(nlid      , strtok((char*)tmp_nlid,"?"));
+          }
+          break;
 	default:
 	  RTMP_LogPrintf("unknown option: %c\n", opt);
 	  usage(argv[0]);
@@ -1178,7 +1194,7 @@ main(int argc, char **argv)
 
   RTMP_SetupStream(&rtmp, protocol, &hostname, port, &sockshost, &playpath,
 		   &tcUrl, &swfUrl, &pageUrl, &app, &auth, &swfHash, swfSize,
-		   &flashVer, &subscribepath, &usherToken, dSeek, dStopOffset, bLiveStream, timeout);
+		   &flashVer, &subscribepath, &usherToken, dSeek, dStopOffset, bLiveStream, timeout, &nlplaypath, &nltoken, &nlid);
 
   /* Try to keep the stream moving if it pauses on us */
   if (!bLiveStream && !(protocol & RTMP_FEATURE_HTTP))
