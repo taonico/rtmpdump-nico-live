@@ -855,7 +855,7 @@ main(int argc, char **argv)
     {"quiet", 0, NULL, 'q'},
     {"verbose", 0, NULL, 'V'},
     {"jtv", 1, NULL, 'j'},
-    {"nlpalypath", 1, NULL, 'N'},
+    {"nlplaypath", 1, NULL, 'N'},
     {0, 0, 0, 0}
   };
 
